@@ -116,12 +116,12 @@ def blogpost():             # create
     return render_template('blog.html')
 
 
-@app.route("/blog_detail/<int:id>")
+@app.route("/blog_detail/<int:id>") # id comes from index.html
 def blog_details(id):       # read/retrive
-    blog = Blog.query.get(id)
+    blog = Blog.query.filter_by(blog_id=id).first()
     return render_template('blog_details.html',blog=blog)
 
-@app.route("/delete/<int:id>",methods=['GET','POST'])
+@app.route("/delete/<int:id>",methods=['GET','POST']) # id comes from blog_details.html
 def delete_post(id):         # delete
     blog = Blog.query.filter_by(blog_id=id).first()
     db.session.delete(blog)
@@ -130,7 +130,7 @@ def delete_post(id):         # delete
     return redirect('/')
 
 
-@app.route("/edit/<int:id>",methods=['GET','POST'])
+@app.route("/edit/<int:id>",methods=['GET','POST']) # id comes from blog_details.html
 def edit_post(id):         # edit
     
     if request.method == 'POST':
