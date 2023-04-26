@@ -52,7 +52,7 @@ def main():
     
 @app.route("/register",methods=['GET','POST'])
 def register():
-    msg=''
+    
     if request.method=='POST':
         email = request.form.get('email')
         password = request.form.get('password')
@@ -121,9 +121,9 @@ def blog_details(id):       # read/retrive
     blog = Blog.query.get(id)
     return render_template('blog_details.html',blog=blog)
 
-@app.route("/delete/<int:id>")
+@app.route("/delete/<int:id>",methods=['GET','POST'])
 def delete_post(id):         # delete
-    blog = Blog.query.get(id)
+    blog = Blog.query.filter_by(blog_id=id).first()
     db.session.delete(blog)
     db.session.commit()
     flash('Post Has Been Deleted','success')
@@ -132,15 +132,24 @@ def delete_post(id):         # delete
 
 @app.route("/edit/<int:id>",methods=['GET','POST'])
 def edit_post(id):         # edit
-    blog = Blog.query.get(id)
+    
     if request.method == 'POST':
-        blog.title = request.form.get('title')
-        blog.author = request.form.get('author')
-        blog.content = request.form.get('content')
+        title = request.form.get('title')
+        author = request.form.get('author')
+        content = request.form.get('content')
+        
+        blog = Blog.query.filter_by(blog_id=id).first()
+       
+        blog.title = title
+        blog.author = author
+        blog.content = content
+        db.session.add(blog)
         db.session.commit()
 
         flash('Post Has Been Updated','success')
         return redirect('/')
+
+    blog = Blog.query.filter_by(blog_id=id).first()    
     return render_template('edit.html',blog=blog)
 
 
